@@ -10,13 +10,15 @@ int main() {
     if( pid == 0){
         while(true) {
             cout << "B" << flush;
-            sleep(1);
+            std::chrono::milliseconds sleeptime(500);
+            std::this_thread::sleep_for(sleeptime);
         }
     }
     else if (pid > 0) {
         while(true) {
             cout << "A" << flush;
-            sleep(1);
+            std::chrono::milliseconds sleeptime(500);
+            std::this_thread::sleep_for(sleeptime);
         }
     }
 }
