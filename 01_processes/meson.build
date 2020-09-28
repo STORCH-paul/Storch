@@ -14,7 +14,7 @@ inc_dir = include_directories(['include',
 
 #subdir('XXX')
 
-executable('XXX',
+executable('aba',
            sources : ['src/aba.cpp'],
            include_directories : inc_dir,
            #dependencies : XXX_dep,

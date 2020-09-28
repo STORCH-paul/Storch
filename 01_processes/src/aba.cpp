@@ -3,29 +3,33 @@
 #include <unistd.h>
 #include <csignal>
 #include <sys/wait.h>
+#include <cstring>
+
 
 using namespace std;
 
 
 int main() {
-    pid_t pid{fork()};
 
-    if( pid == 0){
-        for(int count{0}; count < 6; count++) {
-            cout << "A" << flush;
-            std::chrono::milliseconds sleeptime(500);
-            std::this_thread::sleep_for(sleeptime);
+    pid_t pid1{fork()};
+        if (pid1 == 0)
+        {
+            execl("./charout", "./charout", "A", 0);
         }
-        quick_exit(123);
-    }
-    else if (pid > 0) {
-        for(int count{0}; count < 6; count++) {
-            cout << "B" << flush;
-            std::chrono::milliseconds sleeptime(500);
+        else
+        {
+            pid_t pid2{fork()};
+            if (pid2 == 0)
+            {
+                execl("./charout", "./charout", "B", 0);
+            }
+
+            std::chrono::milliseconds sleeptime(3000);
             std::this_thread::sleep_for(sleeptime);
+
+            kill(pid1, SIGKILL);
+            kill(pid2, SIGKILL);
+            exit(EXIT_SUCCESS);
         }
-        int status;
-        waitpid(pid, &status, 0);
-        exit(EXIT_SUCCESS);
-    }
+        sleep(100);
 }
