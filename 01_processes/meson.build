@@ -1,4 +1,4 @@
-project('XXX', 'cpp',
+project('processes', 'cpp',
         license : ['Boost'],
         version : '0.1',
         default_options : ['cpp_std=c++2a', 'warning_level=3', 'werror=true'])
@@ -14,14 +14,19 @@ inc_dir = include_directories(['include',
 
 #subdir('XXX')
 
-src = ['src/aba.cpp']
-
 executable('XXX',
-            sources : src,
-            include_directories : inc_dir,
-            #dependencies : XXX_dep,
-            #link_with : XXX_lib
+           sources : ['src/aba.cpp'],
+           include_directories : inc_dir,
+           #dependencies : XXX_dep,
+           #link_with : XXX_lib
            )
+
+executable('charout',
+           sources : ['src/charout.cpp'],
+           include_directories : inc_dir,
+           #dependencies : XXX_dep,
+           #link_with : XXX_lib
+          )
 
 # doctest_dir = include_directories([get_option('doctest_include_dir')])
 
