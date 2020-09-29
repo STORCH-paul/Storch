@@ -1,12 +1,12 @@
 #include <iostream>
 #include <thread>
 #include <sys/wait.h>
+#include <random>
 
 
 using namespace std;
 
-class Car
-{
+class Car {
     private:
         string name;
     public:
@@ -15,24 +15,26 @@ class Car
         void operator()();
 };
 
-Car::Car(string _name)
-{
+Car::Car(string _name) {
     name = _name;
 }
 
-Car::~Car()
-{
+Car::~Car() {
 }
 
-void Car::operator()(){
+void Car::operator()() {
+    std::random_device rd;
+    std::mt19937 gen{rd()};
+    std::uniform_real_distribution<> dis{1, 10};
 
     int count{1};
     while (true) {
-        this_thread::sleep_for(1s);
-        cout << count << " " << name << endl;
+        cout << flush;
+        double round_time{dis(gen)};
+        this_thread::sleep_for(chrono::milliseconds{u_int((round_time * 1000))});
+        cout << to_string(count) << " " << name << " " << round_time << "\n";
         count++;
     }
-
 }
 
 void dacia_logan_mcv(){
