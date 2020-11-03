@@ -1,9 +1,13 @@
+#include <thread>
+#include <mutex>
+
 using namespace std;
 
 class account
 {
 private:
   int balance{0};
+  mutex balance_lock;
 
 public:
   account(int balance);

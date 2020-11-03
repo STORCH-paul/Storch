@@ -1,3 +1,4 @@
+#include <thread>
 #include <account.h>
 
 using namespace std;
@@ -19,6 +20,7 @@ void account::deposit(int amount)
 
 bool account::withdraw(int amount)
 {
+  lock_guard<mutex> lock(balance_lock);
 
   int new_balance{balance - amount};
 
@@ -28,6 +30,7 @@ bool account::withdraw(int amount)
   }
   else
   {
+    this_thread::yield();
     balance = new_balance;
 
     return true;
