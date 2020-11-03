@@ -5,7 +5,9 @@ using namespace std;
 
 account::account(int init_balance)
 {
+  balance_lock.lock();
   balance = init_balance;
+  balance_lock.unlock();
 }
 
 int account::get_balance()
@@ -15,6 +17,7 @@ int account::get_balance()
 
 void account::deposit(int amount)
 {
+  unique_lock<mutex> lock(balance_lock);
   balance += amount;
 }
 
