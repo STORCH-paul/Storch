@@ -9,6 +9,7 @@
 
 #include "work_packet.h"
 #include "work_queue.h"
+#include "CLI11.hpp"
 
 using namespace std;
 
@@ -59,14 +60,22 @@ void worker(int id, WorkQueue &queue){
     }
 }
 
-int main(){
-    WorkQueue queue{};
+int main(int argc, char *argv[]){
+    CLI::App app("Boss and worker simulation");
+    unsigned int size{0};
+    app.add_option("size", size, "Queue Size")->required();
+    //int deposits{5};
+    //app.add_option("-d,--deposits", deposits, "Count of deposits", true);
+    CLI11_PARSE(app, argc, argv);
+
+
+    WorkQueue queue{size};
 
     thread w1{worker, 1, ref(queue)};
     thread w2{worker, 2, ref(queue)};
     thread w3{worker, 3, ref(queue)};
 
-    Boss(queue);
+    thread b{Boss, ref(queue)};
 
     w1.join();
     w2.join();
