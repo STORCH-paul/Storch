@@ -1,8 +1,6 @@
 #include "work_queue.h"
 
-WorkQueue::WorkQueue(){
-
-}
+WorkQueue::WorkQueue(){}
 
 WorkQueue::~WorkQueue(){
 }
@@ -20,6 +18,7 @@ WorkPacket WorkQueue::pop(){
 
     WorkPacket ret{queue.front()};
     queue.pop();
+    notFullCv.notify_one();
 
     return ret;
 }
