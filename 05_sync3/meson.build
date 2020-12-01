@@ -1,37 +1,21 @@
-project('04_sync2', 'cpp',
+project('PROJNAME', 'cpp',
         license : ['Boost'],
         version : '0.1',
-        default_options : ['cpp_std=c++2a', 'warning_level=3', 'werror=true'])
+        default_options : ['cpp_std=c++17', 'warning_level=3', 'werror=true'])
 
 thread_dep = dependency('threads')
 
-inc_dir = include_directories(['include',
-#                               get_option('cli11_include_dir'),
-#                               get_option('spdlog_include_dir'),
-#                               get_option('json_include_dir'),
-#                               get_option('asio_include_dir')                               
-                              ])
+add_global_arguments('-I ~/workspace/builds/asio/asio/include/', language : 'cpp')
+add_global_arguments('-DASIO_STANDALONE', language : 'cpp')
+add_global_arguments('-DASIO_NO_DEPRECATED', language : 'cpp')
 
-#subdir('XXX')
+# subdir('SUBDIR1')
 
-src = ['src/main.cpp', 'src/work_queue.cpp', 'src/work_packet.cpp']
+inc_dir = include_directories('include')
+src = ['src/main.cpp', 'src/philosopher.cpp']
 
-executable('04_sync2',
-            sources : src,
-            include_directories : inc_dir,
-            dependencies : thread_dep
-            #link_with : XXX_lib
-           )
-
-# doctest_dir = include_directories([get_option('doctest_include_dir')])
-
-# test_src = ['tests/test1.cpp',
-#             'src/stack.cpp']
-
-# test_exe = executable('test1',
-#                       sources : test_src,
-#                       include_directories : [inc_dir, doctest_dir],
-#                       dependencies : lib_fmt)
-
-# test('test1', test_exe)
-
+executable('dining',
+           sources : src,
+           include_directories : inc_dir,
+           dependencies : thread_dep
+          )
