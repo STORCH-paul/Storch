@@ -8,6 +8,7 @@ using namespace std;
 
 int main()
 {
+
     mutex g1;
     mutex g2;
     mutex g3;
