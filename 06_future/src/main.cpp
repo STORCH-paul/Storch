@@ -23,11 +23,25 @@ string check_callable(const string& numbers){
     }  
 }
 
-void factoring(vector<string>& numbers, vector<future<vector<InfInt>>>& futs){
+void factoring(vector<string>& numbers, vector<shared_future<vector<InfInt>>>& futs){
     for (auto num : numbers)
     {
         InfInt number = num;
         futs.push_back(async(launch::async, get_factors, InfInt(number)));
+    }
+}
+
+void checkFactors(vector<string>& numbers, vector<shared_future<vector<InfInt>>>& futs)
+{
+    for (unsigned int i{}; i < futs.size(); i++){
+        InfInt prod = 1;
+        futs.at(i).wait();
+        for (auto number : futs.at(i).get()){
+            prod *= number;
+        }
+        if (prod != InfInt(numbers.at(i))){
+            cerr << "Factoring FAILED for: " << numbers.at(i) << endl;
+        }
     }
 }
 
@@ -36,12 +50,13 @@ int main(int argc, char *argv[]){
     vector<string> numbers{};
     app.add_option("number", numbers, "numbers to factor")->required()->check(check_callable);
     CLI11_PARSE(app, argc, argv);
-    vector<future<vector<InfInt>>> futs{};
-    thread t1{factoring, ref(numbers), ref(futs)};
-    t1.join();
+    vector<shared_future<vector<InfInt>>> futs{};
+    thread factorThread{factoring, ref(numbers), ref(futs)};
+    factorThread.join();
+    thread checkThread{checkFactors, ref(numbers), ref(futs)};
+    checkThread.join();
     for (unsigned int i{}; i < futs.size(); i++){
         cout << numbers.at(i) << ": ";
-        futs.at(i).wait();
         for (auto primes : futs.at(i).get())
         {
             cout << primes.toString() << " ";
