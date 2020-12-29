@@ -7,6 +7,7 @@
 #include <future>
 #include <vector>
 #include <string>
+#include <thread>
 #include "calc_factors.h"
 #include "CLI11.hpp"
 
@@ -22,17 +23,22 @@ string check_callable(const string& numbers){
     }  
 }
 
+void factoring(vector<string>& numbers, vector<future<vector<InfInt>>>& futs){
+    for (auto num : numbers)
+    {
+        InfInt number = num;
+        futs.push_back(async(launch::async, get_factors, InfInt(number)));
+    }
+}
+
 int main(int argc, char *argv[]){
     CLI::App app("Factor numbers");
     vector<string> numbers{};
     app.add_option("number", numbers, "numbers to factor")->required()->check(check_callable);
     CLI11_PARSE(app, argc, argv);
     vector<future<vector<InfInt>>> futs{};
-    for (auto num : numbers)
-    {
-        InfInt number = num;
-        futs.push_back(async(launch::async, get_factors, InfInt(number)));
-    }
+    thread t1{factoring, ref(numbers), ref(futs)};
+    t1.join();
     for (unsigned int i{}; i < futs.size(); i++){
         cout << numbers.at(i) << ": ";
         futs.at(i).wait();
