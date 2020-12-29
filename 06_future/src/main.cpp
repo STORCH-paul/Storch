@@ -27,28 +27,19 @@ int main(int argc, char *argv[]){
     vector<string> numbers{};
     app.add_option("number", numbers, "numbers to factor")->required()->check(check_callable);
     CLI11_PARSE(app, argc, argv);
-    vector<InfInt> futs{};
+    vector<future<vector<InfInt>>> futs{};
     for (auto num : numbers)
     {
         InfInt number = num;
-        cout << number.toString() << ": ";
-        for (auto primes : get_factors(InfInt(number)))
+        futs.push_back(async(launch::async, get_factors, InfInt(number)));
+    }
+    for (unsigned int i{}; i < futs.size(); i++){
+        cout << numbers.at(i) << ": ";
+        futs.at(i).wait();
+        for (auto primes : futs.at(i).get())
         {
             cout << primes.toString() << " ";
         }
         cout << endl;
     }
-
-
-/*     vector<future<vector<InfInt>>> futs{};
-    for (auto num : numbers)
-    {
-        InfInt number = num;
-        futs.push_back(async([&]() {return get_factors(InfInt(number));}));
-    }
-
-    for (auto& elem : futs)
-    {
-        auto primes = elem.get();
-    } */
 }
