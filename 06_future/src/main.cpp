@@ -23,11 +23,15 @@ string check_callable(const string& numbers){
     }  
 }
 
-void factoring(vector<string>& numbers, vector<shared_future<vector<InfInt>>>& futs){
+void factoring(vector<string>& numbers, vector<shared_future<vector<InfInt>>>& futs, bool& sync){
     for (auto num : numbers)
     {
         InfInt number = num;
-        futs.push_back(async(launch::async, get_factors, InfInt(number)));
+        if(sync){
+            futs.push_back(async(launch::async, get_factors, InfInt(number)));
+        }else{
+            futs.push_back(async(get_factors, InfInt(number)));
+        }
     }
 }
 
@@ -48,10 +52,13 @@ void checkFactors(vector<string>& numbers, vector<shared_future<vector<InfInt>>>
 int main(int argc, char *argv[]){
     CLI::App app("Factor numbers");
     vector<string> numbers{};
+    bool async{false};
     app.add_option("number", numbers, "numbers to factor")->required()->check(check_callable);
+    app.add_flag("-a,--async", async, "async");
     CLI11_PARSE(app, argc, argv);
     vector<shared_future<vector<InfInt>>> futs{};
-    thread factorThread{factoring, ref(numbers), ref(futs)};
+    auto start = chrono::system_clock::now();
+    thread factorThread{factoring, ref(numbers), ref(futs), ref(async)};
     factorThread.join();
     thread checkThread{checkFactors, ref(numbers), ref(futs)};
     checkThread.join();
@@ -63,4 +70,7 @@ int main(int argc, char *argv[]){
         }
         cout << endl;
     }
+    auto duration = chrono::duration_cast<chrono::milliseconds>
+    (std::chrono::system_clock::now() - start);
+    cout << "Time elapsed used for factoring: " << duration.count() << "ms" << endl;
 }
