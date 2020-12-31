@@ -49,6 +49,20 @@ void checkFactors(vector<string>& numbers, vector<shared_future<vector<InfInt>>>
     }
 }
 
+void printFactors(vector<string>& numbers, vector<shared_future<vector<InfInt>>>& futs){
+    
+    for (unsigned int i{}; i < futs.size(); i++){
+        cout << numbers.at(i) << ": ";
+        futs.at(i).wait();
+        for (auto primes : futs.at(i).get())
+        {
+            cout << primes.toString() << " ";
+        }
+        cout << endl;
+    }
+
+}
+
 int main(int argc, char *argv[]){
     CLI::App app("Factor numbers");
     vector<string> numbers{};
@@ -62,14 +76,8 @@ int main(int argc, char *argv[]){
     factorThread.join();
     thread checkThread{checkFactors, ref(numbers), ref(futs)};
     checkThread.join();
-    for (unsigned int i{}; i < futs.size(); i++){
-        cout << numbers.at(i) << ": ";
-        for (auto primes : futs.at(i).get())
-        {
-            cout << primes.toString() << " ";
-        }
-        cout << endl;
-    }
+    thread printThread{printFactors, ref(numbers), ref(futs)};
+    printThread.join();
     auto duration = chrono::duration_cast<chrono::milliseconds>
     (std::chrono::system_clock::now() - start);
     cout << "Time elapsed used for factoring: " << duration.count() << "ms" << endl;
