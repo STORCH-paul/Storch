@@ -1,20 +1,29 @@
 #pragma once
 
+#ifndef SEMAPHOR_H
+#define SEMAPHOR_H
+
 #include <mutex>
 #include <condition_variable>
 
 class Semaphore
 {
   private:
-    unsigned int size;
-    std::mutex mtx;
+    int size;
     std::condition_variable notEmpty;
+    std::mutex mtx;
+    
 
   public:
-    Semaphore(unsigned int _size);
-    Semaphore();
-    ~Semaphore();
-    int avaliblePermits();
+    Semaphore(){
+      size = 0;
+    };
+    Semaphore(int _size){
+      size = _size;
+    };
     void acquire();
     void release();
+    int avaliblePermits();
 };
+
+#endif

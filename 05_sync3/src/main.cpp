@@ -1,8 +1,8 @@
 #include <iostream>
 #include <thread>
-#include <philosopher.h>
 #include <mutex>
 #include "semaphore.h"
+#include "philosopher.h"
 #include "CLI11.hpp"
 
 using namespace std;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]){
 
     if (nodeadlock == true)
     {
-        semaphore = new Semaphore{2};
+        semaphore = new Semaphore{4};
     }
     else if (livelock == true)
     {
@@ -38,8 +38,8 @@ int main(int argc, char *argv[]){
     Philosopher p1{1, g1, g2, semaphore, timeout};
     Philosopher p2{2, g2, g3, semaphore, timeout};
     Philosopher p3{3, g3, g4, semaphore, timeout};
-    Philosopher p4{3, g4, g5, semaphore, timeout};
-    Philosopher p5{3, g5, g1, semaphore, timeout};
+    Philosopher p4{4, g4, g5, semaphore, timeout};
+    Philosopher p5{5, g5, g1, semaphore, timeout};
 
     std::thread t1{&Philosopher::eat, ref(p1)};
     std::thread t2{&Philosopher::eat, ref(p2)};

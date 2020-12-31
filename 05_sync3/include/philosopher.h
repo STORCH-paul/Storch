@@ -12,7 +12,7 @@ private:
   int number;
   std::timed_mutex &leftFork;
   std::timed_mutex &rightFork;
-  Semaphore *seamphore;
+  Semaphore *semaphore;
   int forkTimeout;
   void getForks();
   void releaseForks();

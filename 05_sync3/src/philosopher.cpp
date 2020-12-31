@@ -10,7 +10,7 @@ Philosopher::Philosopher(int _number,
                          std::timed_mutex &_leftFork, std::timed_mutex &_rightFork,
                          Semaphore *_semaphore, int _forkTimeout) : leftFork(_leftFork),
                                                                     rightFork(_rightFork),
-                                                                    seamphore(_semaphore),
+                                                                    semaphore(_semaphore),
                                                                     forkTimeout(_forkTimeout)
 {
     number = _number;
@@ -22,9 +22,9 @@ Philosopher::~Philosopher()
 
 void Philosopher::getForks()
 {
-    if (seamphore != nullptr)
+    if (semaphore != nullptr)
     {
-        seamphore->acquire();
+        semaphore->acquire();
     }
 
     Utils::println("Philosopher ", to_string(number), " attempts to get left fork");
@@ -47,9 +47,9 @@ void Philosopher::releaseForks()
 {
     leftFork.unlock();
     Utils::println("Philosopher ", to_string(number), " released left fork");
-    if (seamphore != nullptr)
+    if (semaphore != nullptr)
     {
-        seamphore->release();
+        semaphore->release();
     }
 
     rightFork.unlock();
